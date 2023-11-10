@@ -244,11 +244,42 @@ user_pref("layout.word_select.eat_space_to_next_word", false);
 // visit https://github.com/yokoffing/Betterfox/wiki/Optional-Hardening
 // Enter your personal overrides below this line:
 
+// PREF: restore Top Sites on New Tab page
+user_pref("browser.newtabpage.activity-stream.feeds.topsites", true); // Shortcuts
+user_pref("browser.newtabpage.activity-stream.default.sites", ""); // clear default topsites
+
+// PREF: remove sponsored content on New Tab page
+user_pref("browser.newtabpage.activity-stream.showSponsoredTopSites", false); // Sponsored shortcuts
+user_pref("browser.newtabpage.activity-stream.feeds.section.topstories", false); // Recommended by Pocket
+user_pref("browser.newtabpage.activity-stream.showSponsored", false); // Sponsored Stories
+
+// PREF: restore search engine suggestions
+user_pref("browser.search.suggest.enabled", true);
+
+// PREF: enable GPU-accelerated Canvas2D [WINDOWS]
+user_pref("gfx.canvas.accelerated", true);
+
+user_pref("browser.cache.memory.capacity", 256000); // default= -1 (32768)
+user_pref("browser.cache.memory.max_entry_size", 10240); // default=5120 (5 MB)
+user_pref("media.memory_cache_max_size", 131072); // default=8192; AF=65536
+user_pref("media.memory_caches_combined_limit_kb", 1048576); // default=524288
+user_pref("media.memory_caches_combined_limit_pc_sysmem", 10); // default=5
+
+user_pref("network.http.rcwn.enabled", false);
+user_pref("dom.serviceWorkers.enabled", false);
+
 /****************************************************************************
  * SECTION: SMOOTHFOX                                                       *
 ****************************************************************************/
 // visit https://github.com/yokoffing/Betterfox/blob/main/Smoothfox.js
 // Enter your scrolling overrides below this line:
+
+// only sharpen scrolling
+user_pref("apz.overscroll.enabled", true); // DEFAULT NON-LINUX
+user_pref("mousewheel.min_line_scroll_amount", 10); // 10-40; adjust this number to your liking; default=5
+user_pref("general.smoothScroll.mouseWheel.durationMinMS", 80); // default=50
+user_pref("general.smoothScroll.currentVelocityWeighting", "0.15"); // default=.25
+user_pref("general.smoothScroll.stopDecelerationWeighting", "0.6"); // default=.4
 
 /****************************************************************************
  * END: BETTERFOX                                                           *
