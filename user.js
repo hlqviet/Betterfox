@@ -266,7 +266,6 @@ user_pref("media.memory_caches_combined_limit_kb", 1048576); // default=524288
 user_pref("media.memory_caches_combined_limit_pc_sysmem", 10); // default=5
 
 user_pref("network.http.rcwn.enabled", false);
-user_pref("dom.serviceWorkers.enabled", false);
 
 /****************************************************************************
  * SECTION: SMOOTHFOX                                                       *
