@@ -258,6 +258,7 @@ user_pref("media.memory_caches_combined_limit_pc_sysmem", 10); // default=5
 
 user_pref("browser.contentblocking.category", "standard");
 user_pref("browser.cache.disk.enable", false);
+user_pref("network.trr.disable-ECS", false);
 
 /****************************************************************************
  * SECTION: SMOOTHFOX                                                       *
