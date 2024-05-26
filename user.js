@@ -249,12 +249,6 @@ user_pref("browser.search.suggest.enabled", true);
 // PREF: enable GPU-accelerated Canvas2D [WINDOWS]
 user_pref("gfx.canvas.accelerated", true);
 
-user_pref("browser.cache.memory.capacity", 256000); // default= -1 (32768)
-user_pref("browser.cache.memory.max_entry_size", 10240); // default=5120 (5 MB)
-user_pref("media.memory_cache_max_size", 131072); // default=8192; AF=65536
-user_pref("media.memory_caches_combined_limit_kb", 1048576); // default=524288
-user_pref("media.memory_caches_combined_limit_pc_sysmem", 10); // default=5
-
 user_pref("browser.cache.disk.enable", false);
 user_pref("network.trr.disable-ECS", false);
 
@@ -264,8 +258,10 @@ user_pref("network.trr.disable-ECS", false);
 // visit https://github.com/yokoffing/Betterfox/blob/main/Smoothfox.js
 // Enter your scrolling overrides below this line:
 
+// credit: https://github.com/black7375/Firefox-UI-Fix
 // only sharpen scrolling
 user_pref("apz.overscroll.enabled", true); // DEFAULT NON-LINUX
+user_pref("general.smoothScroll", true); // DEFAULT
 user_pref("mousewheel.min_line_scroll_amount", 10); // 10-40; adjust this number to your liking; default=5
 user_pref("general.smoothScroll.mouseWheel.durationMinMS", 80); // default=50
 user_pref("general.smoothScroll.currentVelocityWeighting", "0.15"); // default=.25
