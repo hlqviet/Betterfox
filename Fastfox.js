@@ -3,7 +3,7 @@
  * Fastfox                                                                              *
  * "Non ducor duco"                                                                     *
  * priority: speedy browsing                                                            *
- * version: 126                                                                         *
+ * version: 129                                                                         *
  * url: https://github.com/yokoffing/Betterfox                                          *
  ***************************************************************************************/
 
@@ -98,14 +98,6 @@ user_pref("content.notify.interval", 100000); // (.10s); default=120000 (.12s)
 //user_pref("gfx.webrender.software", true); // Software Webrender uses CPU instead of GPU
     //user_pref("gfx.webrender.software.opengl", true); // LINUX
 
-// PREF: NVIDIA RTX Video Super Resolution and RTX Video HDR [WINDOWS] [FF125+]
-// Super Resolution activiates on video content 720p or below.
-// [1] https://bugzilla.mozilla.org/show_bug.cgi?id=1823135
-// [2] https://www.reddit.com/r/firefox/comments/17a0noa/nvidia_video_super_resolution_not_working_on/
-// [3] https://blogs.nvidia.com/blog/ai-decoded-rtxvideo-firefox/
-// [4] https://www.mozilla.org/en-US/firefox/126.0/releasenotes/
-//user_pref("gfx.webrender.super-resolution.nvidia", true); // [REMOVED]
-
 // PREF: GPU-accelerated Canvas2D
 // Use gpu-canvas instead of to skia-canvas.
 // [WARNING] May cause issues on some Windows machines using integrated GPUs [2] [3]
@@ -115,8 +107,8 @@ user_pref("content.notify.interval", 100000); // (.10s); default=120000 (.12s)
 // [2] https://github.com/yokoffing/Betterfox/issues/153
 // [3] https://github.com/yokoffing/Betterfox/issues/198
 //user_pref("gfx.canvas.accelerated", true); // DEFAULT macOS LINUX [FF110]; not compatible with WINDOWS integrated GPUs
-    user_pref("gfx.canvas.accelerated.cache-items", 4096); // default=2048; alt=8192
-    user_pref("gfx.canvas.accelerated.cache-size", 512); // default=256; alt=1024
+    user_pref("gfx.canvas.accelerated.cache-items", 4096); // default=2048; Chrome=4096
+    user_pref("gfx.canvas.accelerated.cache-size", 512); // default=256; Chrome=512
     user_pref("gfx.content.skia-font-cache-size", 20); // default=5; Chrome=20
     // [1] https://bugzilla.mozilla.org/show_bug.cgi?id=1239151#c2
 
@@ -131,11 +123,6 @@ user_pref("content.notify.interval", 100000); // (.10s); default=120000 (.12s)
     //user_pref("media.hardware-video-decoding.force-enabled", true); // enforce
 //user_pref("media.gpu-process-decoder", true); // DEFAULT WINDOWS
 //user_pref("media.ffmpeg.vaapi.enabled", true); // LINUX
-
-// PREF: disable AV1 for hardware decodeable videos
-// Firefox sometimes uses AV1 video decoding even to GPUs which do not support it.
-// [1] https://www.reddit.com/r/AV1/comments/s5xyph/youtube_av1_codec_have_worse_quality_than_old_vp9
-//user_pref("media.av1.enabled", false);
 
 // PREF: hardware and software decoded video overlay [FF116+]
 // [1] https://bugzilla.mozilla.org/show_bug.cgi?id=1829063
@@ -179,7 +166,8 @@ user_pref("content.notify.interval", 100000); // (.10s); default=120000 (.12s)
 // [3] https://support.mozilla.org/en-US/questions/1267945
 // [4] https://askubuntu.com/questions/1214862/36-syns-in-a-row-how-to-limit-firefox-connections-to-one-website
 // [5] https://bugzilla.mozilla.org/show_bug.cgi?id=1622859
-//user_pref("network.http.rcwn.enabled", true); // DEFAULT
+// [6] https://soylentnews.org/comments.pl?noupdate=1&sid=40195&page=1&cid=1067867#commentwrap
+//user_pref("network.http.rcwn.enabled", false);
 
 // PREF: attempt to RCWN only if a resource is smaller than this size
 //user_pref("network.http.rcwn.small_resource_size_kb", 256); // DEFAULT
@@ -243,10 +231,12 @@ user_pref("content.notify.interval", 100000); // (.10s); default=120000 (.12s)
 user_pref("browser.cache.jsbc_compression_level", 3);
 
 // PREF: strategy to use for when the bytecode should be encoded and saved [TESTING ONLY]
-// -1 makes page load times marginally longer when a page is being loaded for the first time.
-// Subsequent reload of websites will be much much faster.
+// -1 makes page load times marginally longer when a page is being loaded for the first time, while
+// subsequent reload of websites will be much much faster.
+// 0 means that the bytecode is created every 4 page loads [3].
 // [1] https://searchfox.org/mozilla-release/source/modules/libpref/init/StaticPrefList.yaml#3461-3488
 // [2] https://www.reddit.com/r/firefox/comments/12786yv/improving_performance_in_firefox_android_part_ii/
+// [3] https://github.com/zen-browser/desktop/issues/217
 // -1 = saved as soon as the script is seen for the first time, independently of the size or last access time
 // 0 = saved in order to minimize the page-load time (default)
 //user_pref("dom.script_loader.bytecode_cache.enabled", true); // DEFAULT
@@ -409,18 +399,26 @@ user_pref("network.ssl_tokens_cache_capacity", 10240); // default=2048; more TLS
 // [5] https://3perf.com/blog/link-rels/#prefetch
 //user_pref("network.http.speculative-parallel-limit", 20); // DEFAULT (FF127+?)
 
-// PREF: DNS prefetching <link rel="dns-prefetch">
+// PREF: DNS prefetching for HTMLLinkElement <link rel="dns-prefetch">
 // Used for cross-origin connections to provide small performance improvements.
-// Disable DNS prefetching to prevent Firefox from proactively resolving
-// hostnames for other domains linked on a page. This may eliminate
-// unnecessary DNS lookups, but can increase latency when following external links.
+// You can enable rel=dns-prefetch for the HTTPS document without prefetching
+// DNS for anchors, whereas the latter makes more specualtive requests [5].
 // [1] https://bitsup.blogspot.com/2008/11/dns-prefetching-for-firefox.html
 // [2] https://css-tricks.com/prefetching-preloading-prebrowsing/#dns-prefetching
 // [3] https://www.keycdn.com/blog/resource-hints#2-dns-prefetching
 // [4] http://www.mecs-press.org/ijieeb/ijieeb-v7-n5/IJIEEB-V7-N5-2.pdf
-// [5] https://bugzilla.mozilla.org/show_bug.cgi?id=1596935
+// [5] https://bugzilla.mozilla.org/show_bug.cgi?id=1596935#c28
 user_pref("network.dns.disablePrefetch", true);
-user_pref("network.dns.disablePrefetchFromHTTPS", true); // (FF127+ false)
+    user_pref("network.dns.disablePrefetchFromHTTPS", true); // [FF127+ false]
+
+// PREF:  DNS prefetch for HTMLAnchorElement (speculative DNS)
+// Disable speculative DNS calls to prevent Firefox from resolving
+// hostnames for other domains linked on a page. This may eliminate
+// unnecessary DNS lookups, but can increase latency when following external links.
+// [1] https://bugzilla.mozilla.org/show_bug.cgi?id=1596935#c28
+// [2] https://github.com/arkenfox/user.js/issues/1870#issuecomment-2220773972
+//user_pref("dom.prefetch_dns_for_anchor_http_document", false); // [FF128+]
+//user_pref("dom.prefetch_dns_for_anchor_https_document", false); // DEFAULT [FF128+]
 
 // PREF: enable <link rel="preconnect"> tag and Link: rel=preconnect response header handling
 //user_pref("network.preconnect", true); // DEFAULT
@@ -437,26 +435,6 @@ user_pref("network.dns.disablePrefetchFromHTTPS", true); // (FF127+ false)
 // PREF: mousedown speculative connections on bookmarks and history [FF98+]
 // Whether to warm up network connections for places:menus and places:toolbar.
 //user_pref("browser.places.speculativeConnect.enabled", false);
-
-// PREF: network preload <link rel="preload"> [REMOVED]
-// Used to load high-priority resources faster on the current page, for strategic
-// performance improvements.
-// Instructs the browser to immediately fetch and cache high-priority resources
-// for the current page to improve performance. The browser downloads resources
-// but does not execute scripts or apply stylesheets - it just caches them for
-// instant availability later.
-// Unlike other pre-connection tags (except modulepreload), this tag is
-// mandatory for the browser.
-// [1] https://developer.mozilla.org/en-US/docs/Web/HTML/Link_types/preload
-// [2] https://w3c.github.io/preload/
-// [3] https://3perf.com/blog/link-rels/#preload
-// [4] https://medium.com/reloading/preload-prefetch-and-priorities-in-chrome-776165961bbf
-// [5] https://www.smashingmagazine.com/2016/02/preload-what-is-it-good-for/#how-can-preload-do-better
-// [6] https://www.keycdn.com/blog/resource-hints#preload
-// [7] https://github.com/arkenfox/user.js/issues/1098#issue-791949341
-// [8] https://yashints.dev/blog/2018/10/06/web-perf-2#preload
-// [9] https://web.dev/preload-critical-assets/
-//user_pref("network.preload", true); // [REMOVED]
 
 // PREF: network module preload <link rel="modulepreload"> [FF115+]
 // High-priority loading of current page JavaScript modules.
@@ -593,18 +571,18 @@ user_pref("dom.security.sanitizer.enabled", true);
 // PREF: determine when tabs unload [WINDOWS] [LINUX]
 // Notify TabUnloader or send the memory pressure if the memory resource
 // notification is signaled AND the available commit space is lower than
-// this value.
-// Set this to some high value, e.g. 2/3 of total memory available in your system:
-// 4GB=2640, 8GB=5280, 16GB=10560, 32GB=21120, 64GB=42240
+// this value (in MiB).
+// Set this to some value, e.g. 4/5 of total memory available on your system:
+// 4GB=3276, 8GB=6553, 16GB=13107, 32GB=25698, 64GB=52429
 // [1] https://dev.to/msugakov/taking-firefox-memory-usage-under-control-on-linux-4b02
-//user_pref("browser.low_commit_space_threshold_mb", 2640); // default=200; WINDOWS LINUX
+//user_pref("browser.low_commit_space_threshold_mb", 3276); // default=200; WINDOWS LINUX
 
 // PREF: determine when tabs unload [LINUX]
 // On Linux, Firefox checks available memory in comparison to total memory,
 // and use this percent value (out of 100) to determine if Firefox is in a
 // low memory scenario.
 // [1] https://dev.to/msugakov/taking-firefox-memory-usage-under-control-on-linux-4b02
-//user_pref("browser.low_commit_space_threshold_percent", 33); // default=5; LINUX
+//user_pref("browser.low_commit_space_threshold_percent", 20); // default=5; LINUX
 
 // PREF: determine how long (in ms) tabs are inactive before they unload
 // 60000=1min; 300000=5min; 600000=10min (default)
